@@ -4,22 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro de Vagas</title>
-
+  
   <link rel="preconnect" href="https://script.google.com">
   <link rel="preconnect" href="https://script.googleusercontent.com">
 
   <style>
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+    
     html, body {
-      margin: 0;
-      padding: 0;
       width: 100%;
-      min-height: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
-      background-color: #ffffff;
+      height: 100%;
+      overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #ffffff;
     }
 
+    /* Tela de carregamento */
     #loader {
       position: fixed;
       top: 0;
@@ -31,16 +35,19 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      z-index: 9999999;
+      z-index: 999999;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
     }
 
+    /* Círculo da Animação (Spinner) */
     .spinner {
+      width: 45px;
+      height: 45px;
       border: 4px solid #f3f3f3;
       border-top: 4px solid #007bff;
       border-radius: 50%;
-      width: 45px;
-      height: 45px;
       animation: spin 0.8s linear infinite;
+      margin-bottom: 18px;
     }
 
     @keyframes spin {
@@ -48,24 +55,35 @@
       100% { transform: rotate(360deg); }
     }
 
+    /* Texto fixo (sem girar!) */
+    .loading-text {
+      color: #222222;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+
     iframe {
       width: 100%;
-      min-height: 100vh;
-      min-height: 100dvh;
+      height: 100vh;
       border: none;
       display: block;
       opacity: 0;
       transition: opacity 0.4s ease;
     }
+
+    .hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
   </style>
 </head>
 <body>
 
+  <!-- Tela de Carregamento -->
   <div id="loader">
-    <div class="spinner"></div>
-    <p style="margin-top: 18px; color: #222222; font-size: 16px; font-weight: 600; text-align: center;">
-      Redirecionando para o cadastro. Por favor aguarde...
-    </p>
+    <div class="spinner"></div> <!-- Círculo fecha aqui! -->
+    <p class="loading-text">Redirecionando para o cadastro. Por favor aguarde...</p>
   </div>
 
   <iframe id="custom-iframe" title="Cadastro de Vagas"></iframe>
@@ -81,12 +99,14 @@
       var loader = document.getElementById('loader');
 
       function showIframe() {
-        if (loader) loader.style.display = 'none';
+        if (loader) loader.classList.add('hidden');
         if (iframe) iframe.style.opacity = '1';
       }
 
       iframe.addEventListener('load', showIframe);
-      setTimeout(showIframe, 8000); // Fallback de segurança
+      
+      // Fallback: garante que a tela esconde após 8 segundos se o Google demorar
+      setTimeout(showIframe, 8000);
 
       iframe.src = targetUrl;
     })();
@@ -100,5 +120,6 @@
     gtag('js', new Date());
     gtag('config', 'G-F77NSTS6TJ');
   </script>
+
 </body>
 </html>
