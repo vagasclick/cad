@@ -19,7 +19,7 @@
             width: 100%; 
             min-height: 100%;
             overflow-x: hidden;
-            overflow-y: auto; /* Permite rolagem no celular se o formulário for alto */
+            overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             background-color: #ffffff; 
           }
@@ -28,8 +28,8 @@
     <body style='margin: 0; padding: 0; background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, &apos;Segoe UI&apos;, Roboto, sans-serif;'>
       <b:section id='main'/>
 
-      <!-- INDICADOR FIXO (Fica na tela até o JavaScript mandar fechar) -->
-      <div id='loader' style='position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999999;'>
+      <!-- INDICADOR FIXO -->
+      <div id='loader' style='position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999999; transition: opacity 0.3s ease;'>
         <div style='border: 4px solid #f3f3f3; border-top: 4px solid #007bff; border-radius: 50%; width: 45px; height: 45px; animation: spin 0.8s linear infinite;'/>
         <p style='margin-top: 18px; color: #222222; font-size: 16px; font-weight: 600; text-align: center;'>Redirecionando para o cadastro. Por favor aguarde...</p>
         <style>
@@ -37,7 +37,7 @@
         </style>
       </div>
 
-      <!-- IFRAME (Adaptável para telas móveis) -->
+      <!-- IFRAME -->
       <iframe frameborder='0' id='custom-iframe' style='width: 100%; min-height: 100vh; min-height: 100dvh; border: none; display: block; opacity: 0; transition: opacity 0.4s ease;' title='Cadastro de Vagas'/>
 
       <script type='text/javascript'>
@@ -50,13 +50,16 @@
           var iframe = document.getElementById(&#39;custom-iframe&#39;);
           var loader = document.getElementById(&#39;loader&#39;);
 
-          // Ouve o evento de carregamento APENAS após atribuir a URL do formulário
-          iframe.addEventListener(&#39;load&#39;, function() {
-            loader.style.display = &#39;none&#39;;
-            iframe.style.opacity = &#39;1&#39;;
-          });
+          function showIframe() {
+            if (loader) loader.style.display = &#39;none&#39;;
+            if (iframe) iframe.style.opacity = &#39;1&#39;;
+          }
 
-          // Inicia a requisição
+          iframe.addEventListener(&#39;load&#39;, showIframe);
+
+          // Fallback: Esconde a tela de carregamento após 8 segundos mesmo se o iframe atrasar
+          setTimeout(showIframe, 8000);
+
           iframe.src = targetUrl;
         })();
       </script>
