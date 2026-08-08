@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro de Vagas</title>
 
-  <!-- Conexões antecipadas -->
+  <!-- Conexões antecipadas: acelera o handshake com o Google -->
   <link rel="preconnect" href="https://script.google.com">
   <link rel="preconnect" href="https://script.googleusercontent.com">
   <link rel="dns-prefetch" href="https://script.googleusercontent.com">
@@ -37,6 +37,123 @@
       transition: opacity 0.25s ease, visibility 0.25s ease;
     }
 
-    /* ===== NOVO SPINNER: círculo com 3 pontos dentro ===== */
+    /* ===== SPINNER: círculo com 3 pontos dentro (usado COM e SEM parâmetros) ===== */
     .spinner {
-      width: 6
+      width: 64px;
+      height: 64px;
+      border: 3px solid #e3e8ef; /* anel do círculo */
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin-bottom: 18px;
+    }
+
+    .spinner .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background-color: #007bff;
+      animation: dots 1.2s infinite ease-in-out both;
+    }
+
+    .spinner .dot:nth-child(1) { animation-delay: -0.32s; }
+    .spinner .dot:nth-child(2) { animation-delay: -0.16s; }
+    .spinner .dot:nth-child(3) { animation-delay: 0s; }
+
+    @keyframes dots {
+      0%, 80%, 100% { transform: scale(0.55); opacity: 0.35; }
+      40%           { transform: scale(1);    opacity: 1; }
+    }
+    /* ============================================================================= */
+
+    .loading-text {
+      color: #222222;
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      border: none;
+      display: block;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .hidden { opacity: 0; visibility: hidden; }
+  </style>
+</head>
+<body>
+
+  <!-- Tela de carregamento: o spinner aparece SEMPRE;
+       o texto só aparece quando há parâmetros na URL -->
+  <div id="loader">
+    <div class="spinner">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+    <p id="loading-text" class="loading-text">Redirecionando para o cadastro. Por favor aguarde...</p>
+  </div>
+
+  <iframe id="custom-iframe" title="Cadastro de Vagas"></iframe>
+
+  <!-- Inicia o carregamento do Google o mais cedo possível -->
+  <script>
+    (function () {
+      var BASE_URL = 'https://script.google.com/macros/s/AKfycbwKK7keNE7MYA6EGZB1BM68VmbY1fwj2Vo6lyJOiX1TMGdovgJpXtqOGsz2Z2TdWLWy4Q/exec';
+
+      var params = new URLSearchParams(window.location.search);
+      var cargo = params.get('cargo');
+      var hasParams = params.toString().length > 0;
+
+      var iframe = document.getElementById('custom-iframe');
+      var loader = document.getElementById('loader');
+      var loadingText = document.getElementById('loading-text');
+
+      // SEM parâmetros: esconde o texto e mostra só o spinner.
+      // COM parâmetros: mostra o spinner + o texto de redirecionamento.
+      if (!hasParams && loadingText) loadingText.style.display = 'none';
+
+      function showIframe() {
+        if (loader) loader.classList.add('hidden');
+        if (iframe) iframe.style.opacity = '1';
+      }
+
+      // Assim que o formulário do Google carrega, revela o iframe
+      iframe.addEventListener('load', showIframe, { once: true });
+
+      // Fallback: se o Google demorar muito, revela após 8s
+      setTimeout(showIframe, 8000);
+
+      // Dispara a requisição ao Google imediatamente
+      iframe.src = BASE_URL + (cargo ? '?cargo=' + encodeURIComponent(cargo) : '');
+    })();
+  </script>
+
+  <!-- Google Analytics deferido: não compete com o formulário pelo carregamento -->
+  <script>
+    (function () {
+      function loadGA() {
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function(){ dataLayer.push(arguments); };
+        gtag('js', new Date());
+        gtag('config', 'G-F77NSTS6TJ');
+
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-F77NSTS6TJ';
+        document.head.appendChild(s);
+      }
+      if ('requestIdleCallback' in window) requestIdleCallback(loadGA, { timeout: 4000 });
+      else window.addEventListener('load', loadGA);
+    })();
+  </script>
+
+</body>
+</html>
