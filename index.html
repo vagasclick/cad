@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro de Vagas</title>
 
-  <!-- Conexões antecipadas: economiza ~300-800ms de DNS+TLS+handshake -->
+  <!-- Conexões antecipadas -->
   <link rel="preconnect" href="https://script.google.com">
   <link rel="preconnect" href="https://script.googleusercontent.com">
   <link rel="dns-prefetch" href="https://script.googleusercontent.com">
@@ -37,99 +37,6 @@
       transition: opacity 0.25s ease, visibility 0.25s ease;
     }
 
+    /* ===== NOVO SPINNER: círculo com 3 pontos dentro ===== */
     .spinner {
-      width: 45px;
-      height: 45px;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #007bff;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-bottom: 18px;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .loading-text {
-      color: #222222;
-      font-size: 16px;
-      font-weight: 600;
-      text-align: center;
-    }
-
-    iframe {
-      width: 100%;
-      height: 100vh;
-      height: 100dvh;
-      border: none;
-      display: block;
-      opacity: 0;
-      transition: opacity 0.25s ease;
-    }
-
-    .hidden { opacity: 0; visibility: hidden; }
-  </style>
-</head>
-<body>
-
-  <div id="loader">
-    <div class="spinner"></div>
-    <p id="loading-text" class="loading-text">Redirecionando para o cadastro. Por favor aguarde...</p>
-  </div>
-
-  <iframe id="custom-iframe" title="Cadastro de Vagas"></iframe>
-
-  <!-- SCRIPT IMEDIATAMENTE APÓS O IFRAME: dispara a requisição ao Google
-       durante o parsing, sem esperar o fim da página -->
-  <script>
-    (function () {
-      var BASE_URL = 'https://script.google.com/macros/s/AKfycbwKK7keNE7MYA6EGZB1BM68VmbY1fwj2Vo6lyJOiX1TMGdovgJpXtqOGsz2Z2TdWLWy4Q/exec';
-
-      var params = new URLSearchParams(window.location.search);
-      var cargo = params.get('cargo');
-      var hasParams = params.toString().length > 0;
-
-      var iframe = document.getElementById('custom-iframe');
-      var loader = document.getElementById('loader');
-      var loadingText = document.getElementById('loading-text');
-
-      // Sem parâmetros: não mostra a mensagem, só o spinner discreto
-      if (!hasParams && loadingText) loadingText.style.display = 'none';
-
-      function showIframe() {
-        if (loader) loader.classList.add('hidden');
-        if (iframe) iframe.style.opacity = '1';
-      }
-
-      iframe.addEventListener('load', showIframe, { once: true });
-      setTimeout(showIframe, 8000); // fallback
-
-      // Inicia o carregamento do Google AGORA (o mais cedo possível)
-      iframe.src = BASE_URL + (cargo ? '?cargo=' + encodeURIComponent(cargo) : '');
-    })();
-  </script>
-
-  <!-- Google Analytics DEFERIDO: só carrega quando o navegador fica ocioso
-       ou após o iframe abrir, para não roubar banda/conexões do formulário -->
-  <script>
-    (function () {
-      function loadGA() {
-        window.dataLayer = window.dataLayer || [];
-        window.gtag = function(){ dataLayer.push(arguments); };
-        gtag('js', new Date());
-        gtag('config', 'G-F77NSTS6TJ');
-
-        var s = document.createElement('script');
-        s.async = true;
-        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-F77NSTS6TJ';
-        document.head.appendChild(s);
-      }
-      if ('requestIdleCallback' in window) requestIdleCallback(loadGA, { timeout: 4000 });
-      else window.addEventListener('load', loadGA);
-    })();
-  </script>
-
-</body>
-</html>
+      width: 6
