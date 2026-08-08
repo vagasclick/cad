@@ -4,34 +4,28 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro de Vagas</title>
-  
+
   <link rel="preconnect" href="https://script.google.com">
   <link rel="preconnect" href="https://script.googleusercontent.com">
 
   <style>
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
-    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     html, body {
       width: 100%;
       height: 100%;
-      overflow-y: auto; 
+      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background-color: #ffffff;
     }
 
-    /* Tela de carregamento */
     #loader {
       position: fixed;
-      top: 0;
-      left: 0;
+      top: 0; left: 0;
       width: 100vw;
       height: 100vh;
-      height: 100dvh; /* Altura dinâmica para telas mobile */
+      height: 100dvh;
       background-color: #ffffff;
       display: flex;
       flex-direction: column;
@@ -41,7 +35,6 @@
       transition: opacity 0.4s ease, visibility 0.4s ease;
     }
 
-    /* Círculo da Animação (Spinner) */
     .spinner {
       width: 45px;
       height: 45px;
@@ -57,7 +50,6 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* Texto fixo */
     .loading-text {
       color: #222222;
       font-size: 16px;
@@ -68,7 +60,7 @@
     iframe {
       width: 100%;
       height: 100vh;
-      height: 100dvh; /* Usa a altura dinâmica do navegador mobile */
+      height: 100dvh;
       border: none;
       display: block;
       opacity: 0;
@@ -83,5 +75,62 @@
 </head>
 <body>
 
-  <!-- Tela de Carregamento -->
   <div id="loader">
+    <div class="spinner"></div>
+    <p id="loading-text" class="loading-text">Redirecionando para o cadastro. Por favor aguarde...</p>
+  </div>
+
+  <iframe id="custom-iframe" title="Cadastro de Vagas"></iframe>
+
+  <script>
+    (function () {
+      var BASE_URL = 'https://script.google.com/macros/s/AKfycbwKK7keNE7MYA6EGZB1BM68VmbY1fwj2Vo6lyJOiX1TMGdovgJpXtqOGsz2Z2TdWLWy4Q/exec';
+
+      var params = new URLSearchParams(window.location.search);
+      var cargo = params.get('cargo');
+      var hasParams = params.toString().length > 0; // true se houver ?cargo=... ou qualquer outro parâmetro
+
+      var targetUrl = BASE_URL + (cargo ? '?cargo=' + encodeURIComponent(cargo) : '');
+
+      var iframe = document.getElementById('custom-iframe');
+      var loader = document.getElementById('loader');
+      var loadingText = document.getElementById('loading-text');
+
+      // SEM PARÂMETROS: não exibe a mensagem de texto.
+      // Mantém apenas o spinner girando para a tela não ficar "em branco/morta"
+      // enquanto o Google carrega.
+      if (!hasParams) {
+        if (loadingText) loadingText.style.display = 'none';
+
+        // ⚠️ Se você quiser que NÃO apareça NADA (nem o spinner),
+        // apague a linha acima e descomente as duas abaixo:
+        // if (loader) loader.style.display = 'none';
+        // if (iframe) iframe.style.opacity = '1';
+      }
+
+      function hideLoader() {
+        if (loader) loader.classList.add('hidden');
+        if (iframe) iframe.style.opacity = '1';
+      }
+
+      // Assim que o formulário do Google terminar de carregar, revela o iframe
+      iframe.addEventListener('load', hideLoader);
+
+      // Fallback: se o Google demorar muito, revela mesmo assim após 8s
+      setTimeout(hideLoader, 8000);
+
+      iframe.src = targetUrl;
+    })();
+  </script>
+
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-F77NSTS6TJ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-F77NSTS6TJ');
+  </script>
+
+</body>
+</html>
