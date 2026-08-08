@@ -5,16 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro de Vagas</title>
 
-  <!-- SEM PARÂMETROS: redireciona IMEDIATAMENTE, antes de pintar qualquer coisa. -->
-  <script>
-    (function () {
-      var BASE_URL = 'https://script.google.com/macros/s/AKfycbwKK7keNE7MYA6EGZB1BM68VmbY1fwj2Vo6lyJOiX1TMGdovgJpXtqOGsz2Z2TdWLWy4Q/exec';
-      var hasParams = new URLSearchParams(window.location.search).toString().length > 0;
-      if (!hasParams) window.location.replace(BASE_URL);
-    })();
-  </script>
-
-  <!-- Conexões antecipadas (aceleram o caso COM parâmetros) -->
+  <!-- Conexões antecipadas: aceleram o carregamento do Google -->
   <link rel="preconnect" href="https://script.google.com">
   <link rel="preconnect" href="https://script.googleusercontent.com">
   <link rel="dns-prefetch" href="https://script.googleusercontent.com">
@@ -58,12 +49,11 @@
       margin-bottom: 18px;
     }
 
-    /* Anel do círculo (gira) */
     .spinner .ring {
       position: absolute;
       inset: 0;
       border: 3px solid #e3e8ef;
-      border-top-color: #007bff; /* trecho azul que evidencia o giro */
+      border-top-color: #007bff;
       border-radius: 50%;
       animation: girar 0.9s linear infinite;
     }
@@ -73,7 +63,6 @@
       100% { transform: rotate(360deg); }
     }
 
-    /* Três pontos dentro (pulsam sem girar) */
     .spinner .dot {
       width: 9px;
       height: 9px;
@@ -114,6 +103,7 @@
 </head>
 <body>
 
+  <!-- Spinner aparece nos 2 casos; o texto só COM parâmetros -->
   <div id="loader">
     <div class="spinner">
       <span class="ring"></span>
@@ -121,24 +111,29 @@
       <span class="dot"></span>
       <span class="dot"></span>
     </div>
-    <p class="loading-text">Redirecionando para o cadastro. Por favor aguarde...</p>
+    <p id="loading-text" class="loading-text">Redirecionando para o cadastro. Por favor aguarde...</p>
   </div>
 
-  <!-- src padrão no próprio HTML: se o JS falhar, o formulário já carrega -->
+  <!-- src no próprio HTML: a requisição ao Google começa durante o parsing -->
   <iframe id="custom-iframe" title="Cadastro de Vagas"
     src="https://script.google.com/macros/s/AKfycbwKK7keNE7MYA6EGZB1BM68VmbY1fwj2Vo6lyJOiX1TMGdovgJpXtqOGsz2Z2TdWLWy4Q/exec"></iframe>
 
-  <!-- Fluxo COM parâmetros: ajusta a URL e controla o loader -->
   <script>
     (function () {
       var BASE_URL = 'https://script.google.com/macros/s/AKfycbwKK7keNE7MYA6EGZB1BM68VmbY1fwj2Vo6lyJOiX1TMGdovgJpXtqOGsz2Z2TdWLWy4Q/exec';
 
       var params = new URLSearchParams(window.location.search);
       var cargo = params.get('cargo');
+      var hasParams = params.toString().length > 0;
 
       var iframe = document.getElementById('custom-iframe');
       var loader = document.getElementById('loader');
+      var loadingText = document.getElementById('loading-text');
 
+      // SEM parâmetros: mantém o spinner, mas esconde a mensagem de texto
+      if (!hasParams && loadingText) loadingText.style.display = 'none';
+
+      // COM parâmetro cargo: ajusta a URL do iframe
       if (cargo) {
         iframe.src = BASE_URL + '?cargo=' + encodeURIComponent(cargo);
       }
@@ -148,8 +143,11 @@
         if (iframe) iframe.style.opacity = '1';
       }
 
+      // Revela o formulário assim que ele terminar de carregar
       iframe.addEventListener('load', showIframe, { once: true });
-      setTimeout(showIframe, 8000); // fallback se o Google demorar
+
+      // Fallback: se o Google demorar muito, revela após 10s
+      setTimeout(showIframe, 10000);
     })();
   </script>
 
