@@ -18,7 +18,6 @@
     html, body {
       width: 100%;
       height: 100%;
-      /* Alterado de hidden para auto para permitir a rolagem se o conteúdo ultrapassar a tela */
       overflow-y: auto; 
       -webkit-overflow-scrolling: touch;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -86,44 +85,3 @@
 
   <!-- Tela de Carregamento -->
   <div id="loader">
-    <div class="spinner"></div>
-    <p class="loading-text">Redirecionando para o cadastro. Por favor aguarde...</p>
-  </div>
-
-  <iframe id="custom-iframe" title="Cadastro de Vagas"></iframe>
-
-  <script>
-    (function () {
-      var BASE_URL = 'https://script.google.com/macros/s/AKfycbwKK7keNE7MYA6EGZB1BM68VmbY1fwj2Vo6lyJOiX1TMGdovgJpXtqOGsz2Z2TdWLWy4Q/exec';
-      var params = new URLSearchParams(window.location.search);
-      var cargo = params.get('cargo');
-      var targetUrl = BASE_URL + (cargo ? '?cargo=' + encodeURIComponent(cargo) : '');
-
-      var iframe = document.getElementById('custom-iframe');
-      var loader = document.getElementById('loader');
-
-      function showIframe() {
-        if (loader) loader.classList.add('hidden');
-        if (iframe) iframe.style.opacity = '1';
-      }
-
-      iframe.addEventListener('load', showIframe);
-      
-      // Fallback: garante que a tela esconde após 8 segundos se o Google demorar
-      setTimeout(showIframe, 5000);
-
-      iframe.src = targetUrl;
-    })();
-  </script>
-
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-F77NSTS6TJ"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-F77NSTS6TJ');
-  </script>
-
-</body>
-</html>
